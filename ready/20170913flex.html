@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>驾驶员信息审核详细页</title>
+    <meta charset="utf-8" />
+    <title>驾驶员信息审核列表页</title>
+    <link href="../../../themes/insdep/easyui.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/insdep/easyui_animation.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/insdep/easyui_plus.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/insdep/insdep_theme_default.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/insdep/icon.css" rel="stylesheet" type="text/css">
+    <link href="../../../themes/insdep/easyui-timeline.css" rel="stylesheet" type="text/css">
+    <link href="../../../web/css/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="../../../jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../easyui/jquery.easyui-1.5.1.min.js"></script>
+    <script type="text/javascript" src="../../../themes/insdep/jquery.insdep-extend.min.js"></script>
+    <script src="../../../js/refbox.js"></script>
+    <script src="../../../js/common.js"></script>
+    <script src="../../../js/proxy.js"></script>
+    <style>
+        *{font-size:14px;}
+        span { display: inline; }
+        .content-box { margin: 20px; padding-bottom: 60px;font-size:14px; }
+        .level_step { padding: 20px 0; overflow: hidden; margin: 10px; }
+        .level_step .icon-box { width: 20%; float: left; }
+        .level_step .icon_step { position: relative; height: 5px; margin-bottom: 15px; background: #3caaff; margin-left: 30px; border: 5px solid #ededed; border-left: 0; border-right: 0; }
+        .level_step .icon_step .point { border: 3px solid #ededed; background: #3caaff; text-align: center; line-height: 26px; position: absolute; border-radius: 33px; color: #fff; display: inline-block; left: -33px; top: -16px; width: 30px; z-index: 1; height: 30px; font-style: italic; font-size: 14px; font-weight: 700; }
+        .level_step .icon_step .point sub { font-style: normal; margin-left: 3px; }
+        .level_step .icon_step .line { width: 0; height: 5px; background: #3caaff; display: block; position: absolute; top: 0; left: 0; z-index: 3; }
+
+        .info-title { height: 36px; line-height: 36px; background: #f5f5f5; padding-left: 10px; font-size: 16px; }
+        .basic-box { margin: 10px 0; }
+        .basic-box .basic-info { overflow: hidden; }
+        .basic-box .basic-info ul { margin: 10px; overflow: hidden; }
+        .basic-box .basic-info li { width: 33.3%; float: left; height: 36px; line-height: 36px; }
+
+        .timeline-box { }
+        .timeline-box .latest-process { margin: 20px 10px; }
+        .timeline-box .latest-process ul li { margin-bottom: 10px; }
+        .timeline-box .latest-process ul li span { width: 49%; display: inline-block; margin-bottom: 10px; }
+        .timeline-box .latest-process a { color: #ff6700; }
+        .timeline-box .latest-process a:hover { color: #3caaff; }
+        .timeline-box .timeline { display: none; margin-bottom: 30px; margin-left: 180px; padding: 19px 0 130px; }
+        .advice-box span { display: block; border-radius: 4px !important; border: 1px solid #eee !important; margin: 10px 0 !important; box-shadow: none !important; }
+        .advice-box textarea { box-shadow: none !important; }
+        .fix-box { height: 60px; line-height: 60px; position: fixed; bottom: 0; left: 0; width: 100%; border-top: 1px solid #eee; background: #f5f5f5; z-index: 999; margin: 0 auto; text-align: center; }
+        .fix-box a { letter-spacing: 6px; margin: 0 10px; }
+    </style>
+</head>
+<body>
+    <div class="content-box easyui-layout">
+        <div class="icon-box">
+            <div class="level_step">
+                <div class="icon-box">
+                    <div class="icon_step">
+                        <i class="point">V<sub>1</sub></i><span class="line"></span>
+                    </div>
+                    <p>提交申请</p>
+                </div>
+                <div class="icon-box">
+                    <div class="icon_step">
+                        <i class="point">V<sub>2</sub></i><span class="line"></span>
+                    </div>
+                    <p>分公司审批</p>
+                </div>
+                <div class="icon-box">
+                    <div class="icon_step">
+                        <i class="point">V<sub>3</sub></i><span class="line"></span>
+                    </div>
+                    <p>总公司审批</p>
+                </div>
+                <div class="icon-box">
+                    <div class="icon_step">
+                        <i class="point">V<sub>4</sub></i><span class="line"></span>
+                    </div>
+                    <p>公示期</p>
+                </div>
+                <div class="icon-box">
+                    <div class="icon_step" style="width:1px; float:none;">
+                        <i class="point">V<sub>5</sub></i>
+                    </div>
+                    <p>归档</p>
+                </div>
+            </div>
+        </div>
+        <div class="basic-box">
+            <h2 class="info-title">基本信息</h2>
+            <div class="basic-info">
+                <ul>
+                    <li><b>姓名：</b><span>测试测试</span></li>
+                    <li><b>驾驶员性质：</b><span>测试测试</span></li>
+                    <li><b>驾驶员状态：</b><span>测试测试</span></li>
+                    <li><b>出生日期：</b><span>测试测试</span></li>
+                    <li><b>所属公司：</b><span>测试测试</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="timeline-box">
+            <h2 class="info-title">审核情况</h2>
+            <div class="latest-process">
+                <ul>
+                    <li>
+                        <span><b>审核人：</b>测试测试</span>
+                        <span><b>审核日期：</b>2017年9月13日15：00</span>
+                        <p><b>审核意见：</b>很好很好很好在系统更新后支持了支付宝的付款方式</p>
+                    </li>
+                </ul>
+                <a class="look-more" href="javascript:;" state="1">点击查看更多∨</a>
+            </div>
+            <div class="timeline">
+                <dl class="timeline-node-green">
+                    <dt>
+                        <b>Coffey</b>
+                        <p>2017年07月01日 10:00</p>
+                    </dt>
+                    <dd>贾跃亭“净身出户”，乐视网开打股价保卫战？</dd>
+                </dl>
+                <dl>
+                    <dt>
+                        <b>John</b>
+                        <p>2018年07月01日 12:00</p>
+                    </dt>
+                    <dd>明年起所有的iPhone都要用OLED屏幕 三星成大赢家</dd>
+                </dl>
+                <dl>
+                    <dt>
+                        <b>Michelle</b>
+                        <p>2019年07月01日 08:00</p>
+                    </dt>
+                    <dd>苹果为了方便用户在App Store里充值购物，在系统更新后支持了支付宝的付款方式，但直到现在还是有很多用户不知道这个“梗”。因此，支付宝在6月30日至7月7日期间推出了“上App Store绑支付宝，千万红包，限时疯抢”的活动。</dd>
+                </dl>
+                <dl>
+                    <dt>
+                        <b>Jessica</b>
+                        <p>2020年07月01日 15:00</p>
+                    </dt>
+                    <dd>大型科技股下跌 道指跌逾100点</dd>
+                </dl>
+                <dl>
+                    <dt>
+                        <b>William</b>
+                        <p>2021年07月01日 21:00</p>
+                    </dt>
+                    <dd>微信：坚决打击微信“炸群”行为 会有封号处罚</dd>
+                </dl>
+                <dl>
+                    <dt>
+                        <b>Lily</b>
+                        <p>2022年07月01日 09:00</p>
+                    </dt>
+                    <dd>共享单车围城：广州投放量70万辆 上海超100万</dd>
+                </dl>
+                <dl>
+                    <dt>
+                        <b>Jessica</b>
+                        <p>2023年07月01日 12:00</p>
+                    </dt>
+                    <dd>诺基亚与蔡司签署独家合作 目标打造智能手机成像新标准</dd>
+                </dl>
+            </div>
+        </div>
+        <div class="advice-box">
+            <h2 class="info-title">审核意见</h2>
+            <input id="advice" name="advice" data-entity-name="advice" class="easyui-textbox entity-prop" data-options="prompt:'请输入您的审核意见...',multiline:true,validType:'text'" style="width:100%; height:100px;">
+            <!--<textarea id="advice" name="advice" placeholder="请输入您的审核意见..."></textarea>-->
+        </div>
+    </div>
+    <div class="fix-box">
+        <a id="advice-add" href="javascript:void(0)" class="easyui-linkbutton button-info" iconCls="icon-save">提交</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton button-line-blue" onclick="closeMessageDialog()" iconCls="icon-cancel">关闭</a>
+    </div>
+    <script>
+        //查看更多
+        $(".look-more").click(function () {
+            var the = $(this);
+            var state = the.attr("state");
+            if (state == 1) {
+                $(".timeline-box").find(".timeline").slideDown();
+                the.html('收起∧');
+                the.attr("state", 0);
+            } else if (state == 0) {
+                $(".timeline-box").find(".timeline").slideUp();
+                the.html('点击查看更多∨');
+                the.attr("state", 1);
+            }
+        });
+        //提交数据
+        $("#advice-add").click(function () {
+            var the = $(this);
+            var advice = $("#advice").val(); 
+            if (!advice) {
+                $.messager.alert("提示", "请输入审核意见");
+                return;
+            } else {
+                //$.post("", { advice: advice}, function (res) {
+                var res={status:1}
+                    if (res.status == 1) {
+                        $.messager.alert("提示", "审核意见已经提交成功！");
+                    }
+                //}, "json");
+            }
+        });
+    </script>
+</body>
+</html>

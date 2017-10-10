@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>pc layer的使用</title>
+		<script type="text/javascript" src="static/js/jquery-2.1.4.min.js"></script>
+		<script type="text/javascript" src="static/js/main.js"></script>
+		<script type="text/javascript" src="static/layer/layer.js"></script>
+		<link type="text/css" rel="stylesheet" href="static/css/main.css" /> 
+	</head>
+	<body>
+		<a href="javascript:;" style="margin: 20px auto; height:50px; width:100px; background: :#ddd; color: :#fff; font-size: :16px; display: block;" onclick="la()">点击事件</a>
+		<script>
+			function la(){
+				layer.open({
+					content:'你最美，你最美',
+					btn:['好的'],
+					shadeClose:false
+				});
+			}
+		</script>
+	</body>
+</html>

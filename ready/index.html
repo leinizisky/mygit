@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black">
+		<meta name="format-detection" content="telephone=no">
+		<!--<meta http-equiv="Access-Control-Allow-Origin" content="*">-->
+		<title>移动端layer使用</title>
+		<script type="text/javascript" src="static/layer/mobile/layer.js"></script>
+		<script type="text/javascript" src="static/js/vue.min.js"></script>
+		<link type="text/css" rel="stylesheet" href="static/css/main.m.css" />
+		<style>
+			html{font-size: 20px!important;}
+			.content-box {
+				width: 4.5rem;
+				height: 1.5rem;
+				line-height: 1.5rem;
+				text-align: center;
+				border-radius: .1rem;
+				background: #eee;
+				border: 1px solid #ddd;
+				font-size: .75rem;
+				margin: 1rem auto;
+			}
+		</style>
+	</head>
+
+	<body>
+		if (i == 0) {
+            EntityId = driverEntityId;
+            fileType = driverLicense;
+        } else if (i == 1) {
+            EntityId = driverEntityId;
+            fileType = driverLicense;
+        } else if (i == 2) {
+            EntityId = driverEntityId;
+            fileType = driverLicense;
+        }
+        $(upload).webUploader({
+            EntityId: EntityId,
+            fileType: fileType,
+            index: i
+        });
+		{DriverNum: "11", Name: "11", DriverProperty: "公车驾驶员", Phone: "13666666699", Address: "的尚6677889999y8uir56u1234578976432345698765432", …}
+Address
+:
+"的尚6677889999y8uir56u1234578976432345698765432"
+DriverClass
+:
+"["[\"[\\\"\\\"]\"]"]"
+DriverId
+:
+"220cbba2-b133-c894-1433-25236749c8ca"
+DriverNum
+:
+"11"
+DriverProperty
+:
+"公车驾驶员"
+EnsureType
+:
+"["[\"[\\\"\\\"]\"]","养老保险"]"
+IsOutside
+:
+false
+LicenseNo
+:
+"123"
+Name
+:
+"11"
+PartyDate
+:
+"2017-09-11"
+Phone
+:
+"13666666699"
+Political
+:
+"党员"
+UpgradeDate
+:
+"2017-09-20"
+ValidFor
+:
+"2017-10-04"
+ValidFrom
+:
+"2017-09-12"
+		<div class="wrapper" id="app">
+			<p>{{message}}</p>
+			<div class="content-box" onclick="text()">
+				弹出层
+			</div>
+		</div>
+		<script>
+			function text() {
+				layer.open({
+					content: '你最美，你最美',
+					btn: ['好的'],
+					shadeClose: false
+				});
+			}
+			var vm = new Vue({
+				el: "#app",
+				data: {
+					message: "nihaonihao"
+				}
+			});
+		</script>
+	</body>
+
+</html>

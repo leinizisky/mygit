@@ -1,0 +1,9 @@
+@charset "UTF-8";
+body, h1, h2, h3, h4, h5, h6, hr, p, blockquote, dl, dt, dd, ul, ol, li, pre, form, fieldset, legend, button, input, textarea, th, td { margin: 0; padding: 0 }
+body, button, input, select, textarea { font: 12px/1.5 tahoma, Verdana, arial, "microsoft yahei", "sim sun"; *line-height:1.5;
+color: #333; -ms-overflow-style: scrollbar }
+button, input, select, textarea { font-size: 100% }
+ol, ul { list-style: none }
+body { background: #fff }
+small { font-size: 12px }
+h1, h2, h3, h4, h5, h6 { font-size: 100% }

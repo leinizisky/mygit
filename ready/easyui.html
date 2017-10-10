@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title>easyUI的使用</title>
+		<link rel="stylesheet" type="text/css" href="static/plugin/jquery-easyui-1.5.3//themes/default/easyui.css">
+		<link rel="stylesheet" type="text/css" href="static/plugin/jquery-easyui-1.5.3//themes/icon.css">
+		<script src="static/js/main.js" type="text/javascript"></script>
+		<script src="static/plugin/jquery-easyui-1.5.3/jquery.easyui.min.js" type="text/javascript"></script>
+	</head>
+
+	<body>
+		
+
+    
+
+    
+
+    
+<script>
+	var driverId = request("DriverId");
+var mode = request("mode");
+var driverProxy = $.buildProxy("/SafetyManage/Driver", true).buildFunc("GetEntityIdCard", "post").buildFunc("GetFormJson","get");
+var userOrganizeProxy = $.buildProxy("/AuthorizeManage/UserHelper").buildFunc("getUserOrganize");
+var ChangeIdCard = false;
+var driverEntityId = '', CertificateEntityId = '';
+
+$(document).ready(function () {
+    $(".easyui-accordion .panel-header").click();
+    switch (mode) {
+        case "look": {
+            var driver = {
+                DriverId: driverId,
+            };
+            var driverStr = JSON.stringify(driver);
+            InitChildTable(driverStr);
+            //反写数据
+            var KeyVal = { keyValue: driverId }
+            console.log(KeyVal);
+            driverProxy.getFormJson(KeyVal, function (data) {
+                console.log(data);
+                //暂存从业资格证，驾驶员id
+                driverEntityId = data.DriverId;
+                CertificateEntityId = data.Certificate[0].CertificateId;
+                $(".entity-panel").each(function (i, panel) {
+                    var panelName = $(panel).attr("entity-name");
+                    if (panelName) {
+                        //页面绑值
+                        $(panel).setDataFormToJson(data);
+                        //绑定从业资格证
+                        if (panelName == "Certificate") {
+                            $(panel).setDataFormToJson(data.Certificate[0]);
+                        }
+                    }
+                });
+                if (data.DriverClass) {
+                    $("#DriverClass").combobox("setValues", $.parseJSON(data.DriverClass))
+                }
+                if (data.Certificate[0].CerType) {
+                    $("#CerType").combobox("setValues", $.parseJSON(data.Certificate[0].CerType))
+                }
+                if (data.Organize) {
+                    $("#OrganizeId").textbox("setValue", data.OrganizeId);
+                    $("#OrganizeId").textbox("setText", data.Organize.ShortName);
+                    //暂存公司ID和名称
+                    $("#DriverOrganizeId").val(data.OrganizeId);
+                    $("#DriverOrganize").val(data.Organize.ShortName);
+                }
+                if (data.EnsureType != "") {
+                    $("#EnsureType").combobox("setValues", $.parseJSON(data.EnsureType))
+                }
+                //暂存身份证号
+                $("#DriverIdCard").val(data.IDCard);
+                //附件显示
+                $(".uploader-wrapper").each(function (i, upload) {
+                    if (i == 0 || i == 2) {
+                        $(upload).webUploader({
+                            EntityId: driverEntityId,
+                            mode: "edit",
+                            index: i
+                        });
+                    }
+                    if (i == 1) {
+                        $(upload).webUploader({
+                            EntityId: CertificateEntityId,
+                            fileType: "Certificate",
+                            mode: "edit",
+                            index: i
+                        });
+                    }
+                })
+                $('.uploader-image').each(function (index) {
+                    var $wrap = $(this);
+                    if ($wrap.find('.image-picker').length > 0) {
+                        $.post("/Files/Get_DataId", { dataId: driverEntityId, contentType: "HeadPic" }).done(function (result) {
+                            var result = eval(result);
+                            if (result.RType == "1") {
+                                var files = $.makeArray(result.RData);
+                                for (var i = 0; i < files.length; i++) {
+                                    var $list = $wrap.find(".fileList"), $img = $list.find('img');
+                                    $img.attr('src', files[i].FilePath);
+                                    $img.attr('fileId', files[i].FileId);
+                                }
+                            } else {
+                                $.messager.alert('提示信息', '附件查询失败！');
+                            }
+                        }).fail(function (result) {
+                            $.messager.alert('提示信息', '附件查询失败！');
+                        });
+                    } else if ($wrap.find('.front-btn').length > 0) {
+                        $.post("/Files/Get_DataId", { dataId: driverEntityId, contentType: "IdcardFront" }).done(function (result) {
+                            var result = eval(result);
+                            if (result.RType == "1") {
+                                var files = $.makeArray(result.RData);
+                                for (var i = 0; i < files.length; i++) {
+                                    var $list = $wrap.find(".fileList"), $img = $list.find('img');
+                                    $img.attr('src', files[i].FilePath);
+                                    $img.attr('fileId', files[i].FileId);
+                                }
+                            } else {
+                                $.messager.alert('提示信息', '附件查询失败！');
+                            }
+                        }).fail(function (result) {
+                            $.messager.alert('提示信息', '附件查询失败！');
+                        });
+                    } else if ($wrap.find('.back-btn').length > 0) {
+                        $.post("/Files/Get_DataId", { dataId: driverEntityId, contentType: "IdcardBack" }).done(function (result) {
+                            var result = eval(result);
+                            if (result.RType == "1") {
+                                var files = $.makeArray(result.RData);
+                                for (var i = 0; i < files.length; i++) {
+                                    var $list = $wrap.find(".fileList"), $img = $list.find('img');
+                                    $img.attr('src', files[i].FilePath);
+                                    $img.attr('fileId', files[i].FileId);
+                                }
+                            } else {
+                                $.messager.alert('提示信息', '附件查询失败！');
+                            }
+                        }).fail(function (result) {
+                            $.messager.alert('提示信息', '附件查询失败！');
+                        });
+                    }
+                })
+            });
+
+            break;
+        }
+    }
+    Operate();
+})
+//提交表单
+function Operate() {
+    $("#DriverAdd").on("click", function () {
+        var driver = "";
+        var driverLicense = "";
+        var Certificate = "";
+        $(".entity-panel").each(function (i, panel) {
+            var panelName = $(panel).attr("entity-name");
+            if (panelName) {
+                $(panel).getDataFormToJson(function (data) {
+                    if (panelName == "driver") {
+                        driver = data;
+                    }
+                    if (panelName == "driverLicense") {
+                        driverLicense = data;
+                        driverLicense.DriverClass = JSON.stringify($("#DriverClass").combobox("getValues"));
+                    }
+                    if (panelName == "Certificate") {
+                        Certificate = data;
+                        Certificate.CerType = JSON.stringify($("#CerType").combobox("getValues"));
+                    }
+                })
+            }
+        });
+        if (driver == "") {
+            $.messager.alert('提示信息', '有必填项未填写，请检查数据！');
+            return;
+        }
+        var driver = $.extend(driver, driverLicense);
+        driver.IsOutside = false;
+        driver.EnsureType = JSON.stringify($("#EnsureType").combobox("getValues"));
+        driver.DriverId = driverEntityId;
+        Certificate.CertificateId = CertificateEntityId;
+        //驾驶员健康，家庭成员
+        $("#driverHealth").datagrid('accept');
+        $("#dg").datagrid('accept');
+        var driverHealthList = $("#driverHealth").datagrid('getChanges');
+        var driverKinList = $("#dg").datagrid('getChanges');
+        var data = { driver, Certificate, driverKinList, driverHealthList }
+        var StrData = JSON.stringify(data);
+        if (driverId == "") {
+            driverProxy.saveForm({ entityJson: StrData }, function (data) {
+                if (data.type == 3) {
+                    $.messager.alert('操作失败', data.message);
+                    return;
+                }
+                else {
+                    $.messager.alert('提示信息', '保存成功');
+                    parent.setRefreshParent();
+                    closeMessageDialog();
+                }
+            });
+        } else {
+            driverProxy.saveForm({ keyValue: driverId, entityJson: StrData }, function (data) {
+                if (data.type == 3) {
+                    $.messager.alert('操作失败', data.message);
+                    return;
+                }
+                else {
+                    $.messager.alert('提示信息', '保存成功');
+                    parent.setRefreshParent();
+                    closeMessageDialog();
+                }
+            });
+        }
+    });
+    //失去焦点是否身份证检测
+    if (mode == "edit") {
+        $("#idCard").textbox('textbox').bind("blur", function () {
+            if ($("#idCard").textbox("getValue") != $("#DriverIdCard").val()) {
+                ChangeIdCard = true;
+                // openIDCard();
+            } else {
+                ChangeIdCard = false;
+                // openIDCard();
+            }
+        });
+    }
+    else {
+        $("#idCard").textbox('textbox').bind("blur", function () {
+            openIDCard();
+        });
+    }
+    //设置用户所在公司
+    if (mode == "add") {
+        userOrganizeProxy.getUserOrganize(function (Organize) {
+            $("#OrganizeId").textbox("setText", Organize.ShortName);
+            $("input[name='OrganizeId']").val(Organize.OrganizeId);
+            //暂存公司ID和名称
+            $("#DriverOrganizeId").val(Organize.OrganizeId);
+            $("#DriverOrganize").val(Organize.ShortName);
+        });
+    }
+
+}
+//家庭成员及健康档案操作(可编辑datagrid)
+function InitChildTable(Params) {
+    $("#dg").datagrid({
+        iconCls: 'icon-edit',
+        singleSelect: true,
+        url: '/SafetyManage/DriverKin/GetListJson',
+        method: 'get',
+        queryParams: {
+            queryJson: "" + Params + "",
+        },
+        columns: [[
+            { field: 'Check', checkbox: true, width: 20 },
+            {
+                field: 'Relation', title: '称呼', align: 'center', width: 100,
+                formatter: function (value, row) {
+                    return row.Relation;
+                },
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        valueField: 'ItemValue',
+                        textField: 'ItemName',
+                        method: 'get',
+                        url: '/DataItem/KinRelation',
+                    }
+                }
+            },
+            { field: 'Name', title: '姓名', align: 'center', editor: 'textbox', width: 100 },
+            { field: 'Age', title: '年龄', align: 'center', editor: 'numberbox', width: 100 },
+            { field: 'Company', title: '工作单位', align: 'center', editor: 'textbox', width: 200 },
+            { field: 'Job', title: '成员职业', align: 'center', editor: 'textbox', width: 200 },
+            { field: 'Assert', title: '健康状况', align: 'center', editor: 'textbox', width: 100 },
+            { field: 'Phone', title: '联系电话', align: 'center', editor: 'textbox', width: 150 },
+            {
+                field: 'Birthday', title: '生日', align: 'center', editor: {
+                    type: 'datebox',
+                    options: {
+                        editable: false
+                    }
+                }, width: 130
+            },
+            { field: 'Memo', title: '备注', align: 'center', editor: 'textbox', width: 300 },
+        ]],
+        toolbar: [{
+            text: '增加',
+            iconCls: 'icon-add',
+            handler: function () {
+                $("#dg").datagrid('append')
+            }
+        }, {
+            text: '删除',
+            iconCls: 'icon-remove',
+            handler: function () {
+                $("#dg").datagrid('removeit')
+            }
+        }, {
+            text: '完成编辑',
+            iconCls: 'icon-save',
+            handler: function () {
+                $("#dg").datagrid('accept')
+            }
+        },
+        {
+            text: '撤销',
+            iconCls: 'icon-undo',
+            handler: function () {
+                $("#dg").datagrid('reject')
+            }
+        }
+        ]
+    }).datagrid('enableEdit')
+
+
+    $("#driverHealth").datagrid({
+        iconCls: 'icon-edit',
+        singleSelect: true,
+        url: '/SafetyManage/DriverHealth/GetListJson',
+        method: 'get',
+        queryParams: {
+            queryJson: Params,
+        },
+        columns: [[
+            { field: 'Check', checkbox: true, width: 20 },
+            {
+                field: 'CheckDate', title: '体检日期', align: 'center', editor: {
+                    type: 'datebox',
+                    options: {
+                        editable: false
+                    }
+                }, width: 130
+            },
+            { field: 'CheckItem', title: '体检项目', align: 'center', editor: 'textbox', width: 230 },
+            { field: 'Assert', title: '健康状况', align: 'center', editor: 'textbox', width: 100 },
+            {
+                field: 'Pathography', title: '安全隐患病史', align: 'center', width: 200,
+                editor: {
+                    type: 'combobox',
+                    options: {
+                        multiple: true,
+                        valueField: 'ItemValue',
+                        textField: 'ItemName',
+                        method: 'get',
+                        url: '/DataItem/PathographyType',
+                    }
+                }
+            },
+            { field: 'Hospital', title: '体检单位', align: 'center', editor: 'textbox', width: 200 },
+            { field: 'Suggestion', title: '康复建议', align: 'center', editor: 'textbox', width: 200 },
+            { field: 'Memo', title: '备注', align: 'center', editor: 'textbox', width: 300 },
+        ]],
+        toolbar: [{
+            text: '增加',
+            iconCls: 'icon-add',
+            handler: function () {
+                $("#driverHealth").datagrid('append')
+            }
+        }, {
+            text: '删除',
+            iconCls: 'icon-remove',
+            handler: function () {
+                $("#driverHealth").datagrid('removeit')
+            }
+        }, {
+            text: '完成编辑',
+            iconCls: 'icon-save',
+            handler: function () {
+                $("#driverHealth").datagrid('accept')
+            }
+        },
+        {
+            text: '撤销',
+            iconCls: 'icon-undo',
+            handler: function () {
+                $("#driverHealth").datagrid('reject')
+            }
+        }
+        ]
+    }).datagrid('enableEdit')
+}
+//身份证附件上传
+function openIDCard() {
+    if (!$('#idCard').textbox('isValid')) {
+        $.messager.alert("提示", "请输入正确的身份证号")
+        return;
+    }
+    var idCard = $('#idCard').textbox('getValue')
+    if (!idCard) {
+        $.messager.alert("提示", "必须先输入身份证号")
+        return;
+    }
+    //编辑时判断是否改变值
+    if (mode == "edit") {
+        if ($("#idCard").textbox("getValue") != $("#DriverIdCard").val()) {
+            ChangeIdCard = true;
+        } else {
+            ChangeIdCard = false;
+        }
+    }
+    if (ChangeIdCard == false) {
+        driverProxy.GetEntityIdCard({ idCord: $('#idCard').textbox('getValue') }, function (data) {
+            if (data.RType == "1") {
+            } else {
+                $.messager.alert('提示', '身份证号已经存在！');
+                $('#idCard').textbox('setValue', "");
+            }
+        })
+
+    }
+
+}
+{"SkillAssessmentId":"7c3145ce-89aa-4bc3-81ac-6c855ed2e78a","DriverId":"220cbba2-b133-c894-1433-25236749c8ca","DriverName":"11","DriverSex":"1","DriverIDCard":"836754762363456","StartTime":"2017-09-29 16:19:10","DriverType":null,"DriverNo":null,"Examiner":"测试","AssociateExaminer":"测试","ExaminationSection":"测试","ExaminationLength":2000.0,"ExaminationVehicleType":"[\"A3\",\"C1\"]","ExaminationTime":"2017-09-29 16:19:10","ExaminationScore":87.0,"ExaminationRemarks":"测试","IsSystem":false,"ExaminationDetailed":[{"DetailedName":"上车前准备工作","ValueMax":10,"Value":2,"Remarks":"测试"},{"DetailedName":"起步前的准备工作和操作","ValueMax":10,"Value":5,"Remarks":"大大大"},{"DetailedName":"行车过程中的处理、反应情况","ValueMax":10,"Value":null,"Remarks":null},{"DetailedName":"行车的操作熟练程序","ValueMax":10,"Value":null,"Remarks":null},{"DetailedName":"转弯的操作、估计情况","ValueMax":10,"Value":null,"Remarks":null},{"DetailedName":"经过凹凸、漫水、窄桥、隧道、交叉口的处理情况","ValueMax":10,"Value":null,"Remarks":null},{"DetailedName":"路面估计与停车处理情况","ValueMax":10,"Value":null,"Remarks":null},{"DetailedName":"收车后的处理情况","ValueMax":10,"Value":null,"Remarks":null},{"DetailedName":"假如车辆起火、驾驶员的反应及对安全设备的使用程序","ValueMax":10,"Value":null,"Remarks":null},{"DetailedName":"如果乘客求救、驾驶员做出的反应与动作程序情况","ValueMax":10,"Value":null,"Remarks":null}]}
+</script>
+    
+
+    
+	</body>
+
+</html>
