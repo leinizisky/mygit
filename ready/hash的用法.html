@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no">
+    <title>hash的实现</title>
+    <style>
+        .wrapper {
+            width: 16rem;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .search-box  a{
+            width: 16rem;
+            height: 2rem;
+            line-height: 2rem;
+            margin: 0 auto;
+            display: block;
+            border-radius: .2rem;
+            border: 1px solid #ccc;
+            color:#333;
+            text-decoration: none;
+            margin-bottom: .2rem;
+            text-indent: .2rem;
+        }
+
+        .search-box .text {
+            font-size: .7rem;
+            color: #333;
+            text-decoration: none !important;
+        }
+
+        .search-content {
+            display: none;
+        }
+
+        .page-search .searchkey .keylist .ui-list-item {
+            background: #F5F5F5;
+        }
+
+        .ui-list .ui-list-item {
+            border-bottom: 1px solid #f6f6f6;
+            display: block;
+            font-size: .28rem;
+            overflow: hidden;
+            background: #FFF;
+            padding: .2rem .3rem;
+    </style>
+    <script>
+        Hash = function () {
+        }
+        Hash.prototype = {
+            constructor: Hash,
+            add: function (k, v) {
+                if (!this.hasOwnProperty(k)) {
+                    this[k] = v;
+                }
+            },
+            remove: function (k) {
+                if (this.hasOwnProperty(k)) {
+                    delete this[k];
+                }
+            },
+            update: function (k, v) {
+                this[k] = v;
+            },
+            has: function (k) {
+                var type = typeof k;
+                if (type === 'string' || type === 'number') {
+                    return this.hasOwnProperty(k);
+                } else if (type === 'function' && this.some(k)) {
+                    return true;
+                }
+                return false;
+            },
+            clear: function () {
+                for (var k in this) {
+                    if (this.hasOwnProperty(k)) {
+                        delete this[k];
+                    }
+                }
+            },
+            empty: function () {
+                for (var k in this) {
+                    if (this.hasOwnProperty(k)) {
+                        return false;
+                    }
+                }
+                return true;
+            },
+            each: function (fn) {
+                for (var k in this) {
+                    if (this.hasOwnProperty(k)) {
+                        fn.call(this, this[k], k, this);
+                    }
+                }
+            },
+            map: function (fn) {
+                var hash = new Hash;
+                for (var k in this) {
+                    if (this.hasOwnProperty(k)) {
+                        hash.add(k, fn.call(this, this[k], k, this));
+                    }
+                }
+                return hash;
+            },
+            filter: function (fn) {
+                var hash = new Hash;
+                for (var k in this) {
+
+                }
+            },
+            join: function (split) {
+                split = split !== undefined ? split : ',';
+                var rst = [];
+                this.each(function (v) {
+                    rst.push(v);
+                });
+                return rst.join(split);
+            },
+            every: function (fn) {
+                for (var k in this) {
+                    if (this.hasOwnProperty(k)) {
+                        if (!fn.call(this, this[k], k, this)) {
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            },
+            some: function (fn) {
+                for (var k in this) {
+                    if (this.hasOwnProperty(k)) {
+                        if (fn.call(this, this[k], k, this)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            },
+            find: function (k) {
+                var type = typeof k;
+                if (type === 'string' || type === 'number' && this.has(k)) {
+                    return this[k];
+                } else if (type === 'function') {
+                    for (var _k in this) {
+                        if (this.hasOwnProperty(_k) && k.call(this, this[_k], _k, this)) {
+                            return this[_k];
+                        }
+                    }
+                }
+                return null;
+            }
+        };
+    </script>
+</head>
+<body>
+<div class="wrapper">
+    <div class="search-box">
+        <a href="#search"><span class="text">搜索商品名称</span></a>
+        <a href="#hashtest">hash用法测试</a>
+    </div>
+    <div class="search-content">
+        <ul class="ui-list keylist">
+            <li class="ui-list-item"><span>小米MIX 2</span></li>
+            <li class="ui-list-item"><span>小米Note 3</span></li>
+            <li class="ui-list-item"><span>小米Max 2</span></li>
+            <li class="ui-list-item"><span>小米6</span></li>
+            <li class="ui-list-item"><span>小米5X</span></li>
+            <li class="ui-list-item"><span>小米Note 2</span></li>
+            <li class="ui-list-item"><span>小米MIX</span></li>
+            <li class="ui-list-item"><span>小米手机5s</span></li>
+            <li class="ui-list-item"><span>小米5s Plus</span></li>
+            <li class="ui-list-item"><span>小米笔记本Air 12.5英寸</span></li><!--v-repeat-keywordsList--></ul>
+    </div>
+    <div class="hash-box" style="display: none;">
+        hash的用法测试
+    </div>
+    <p>hash的用法，测试hash</p>
+</div>
+<script>
+    document.ready=function(){
+        if(hash.has("search")){
+            alert("111");
+            document.querySelector(".search-content").show();
+        }
+    }
+</script>
+</body>
+</html>
