@@ -18,3 +18,7 @@
 
 8. 为我们的路由、XHR请求、数据管理下载三个库,使用bootstrap作为我的UI库
 > npm i vue-resource vue-router vuex bootstrap --save
+
+9. 全局安装vue-router 和 vuex
+>  cnpm install vue-router
+>   cnpm install vuex --save
