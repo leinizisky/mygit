@@ -20,3 +20,6 @@
 
 7. s插入输入，esc 退出，:wq保存操作
 
+8.解决git push 一直停留在writing objects 的问题
+> git config --global http.postBuffer 524288000
+
